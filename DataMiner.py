@@ -1,7 +1,10 @@
 import tweepy
 from HashtagFinder import HashtagFinder
+from PreProcessTweets import PreProcessTweets
+import pandas as pd
 
-class DataMiner():
+
+class DataMiner:
     
     def __init__(self, api, starting_hashtag, location_radius, language, tagignore = []):
         self.api = api
@@ -9,13 +12,15 @@ class DataMiner():
         self.language = language
         self.denial_tweets = []
         self.ids = []
+        self.starting_hashtag = starting_hashtag
         self.finder = HashtagFinder(api, starting_hashtag, location_radius, language, tagignore)
+        self.tags_panda = pd.DataFrame(columns=['Author', 'Location', 'Tags'])
     
     def _collect_tweets(self):
-        #find relevant hashtags to search for
+        # find relevant hashtags to search for
         self.finder.collect_tags()
         denial_tags = self.finder.get_hashtags()
-        denial_tags = {k: v for k, v in sorted(denial_tags.items(), key=lambda item: item[1]) if v >= 50}
+        denial_tags = {k: v for k, v in sorted(denial_tags.items(), key=lambda item: item[1]) if v >= 15}
         
         for k, v in denial_tags.items():
             print("Processing tag: " + k)
@@ -32,7 +37,17 @@ class DataMiner():
                 if item not in self.ids:
                     self.ids.append(item.id)
                     self.denial_tweets.append(item.full_text)
-                    
-    def mine(self):
+                    self.tags_panda = self.tags_panda.append({'Author': item.author.name,
+                                                            'Location': item.author.location,
+                                                            'Tags': PreProcessTweets.get_tags(item.full_text)},
+                                                            ignore_index=True)
+
+    def mine(self, starting_tag = None):
+        if not starting_tag:
+            self.starting_hashtag = starting_tag
         self._collect_tweets()
         return self.denial_tweets
+
+    def get_dataframe(self):
+        return self.tags_panda
+

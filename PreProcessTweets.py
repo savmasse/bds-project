@@ -44,6 +44,12 @@ class PreProcessTweets():
     def _remove_punctuation(self):
         """ Punctuation affects words: eg. 'however' is not the same word as 'however,'"""
         pass
+
+    @staticmethod
+    def get_tags(tweet):
+        words = tweet.split()
+        tags = [word for word in words if "#" in word]
+        return tags
     
     def preprocess(self):
         """ Perform the requested steps of the preprocessing. """
