@@ -37,5 +37,5 @@ class HashtagFinder():
     
     def hashtags_from_tweet(self, tweet):
         words = tweet.split()
-        tags = ["#"+re.sub(r'\W+','', word) for word in words if "#" in word]
+        tags = ["#"+re.sub(r'\W+', '', word) for word in words if "#" in word]
         return tags

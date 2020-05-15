@@ -15,7 +15,7 @@ class DataMiner():
         #find relevant hashtags to search for
         self.finder.collect_tags()
         denial_tags = self.finder.get_hashtags()
-        denial_tags = {k: v for k, v in sorted(denial_tags.items(), key=lambda item: item[1]) if v >= 10}
+        denial_tags = {k: v for k, v in sorted(denial_tags.items(), key=lambda item: item[1]) if v >= 50}
         
         for k, v in denial_tags.items():
             print("Processing tag: " + k)
