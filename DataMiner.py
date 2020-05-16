@@ -39,7 +39,7 @@ class DataMiner:
                     self.denial_tweets.append(item.full_text)
                     self.tags_panda = self.tags_panda.append({'Author': item.author.name,
                                                             'Location': item.author.location,
-                                                            'Tags': PreProcessTweets.get_tags(item.full_text)},
+                                                            'Tags': PreProcessTweets.get_tags(item.full_text, True)},
                                                             ignore_index=True)
 
     def mine(self, starting_tag = None):

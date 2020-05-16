@@ -46,9 +46,17 @@ class PreProcessTweets():
         pass
 
     @staticmethod
-    def get_tags(tweet):
+    def get_tags(tweet, string=True):
         words = tweet.split()
-        tags = [word for word in words if "#" in word]
+        if string:
+            tags = ""
+            for word in words:
+                if "#" in word:
+                    tags = tags + word + "|"
+            if tags != "":
+                tags = tags[:-1]
+        else:
+            tags = [word for word in words if "#" in word]
         return tags
     
     def preprocess(self):

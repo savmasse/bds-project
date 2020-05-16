@@ -1,5 +1,6 @@
 import tweepy
 from Authentication import Authentication
+from PreProcessTweets import PreProcessTweets
 import csv
 
 #override tweepy.StreamListener to add logic to on_status
@@ -30,9 +31,11 @@ class MyStreamListener(tweepy.StreamListener):
                 coordinates = None
                 if status.place is not None:
                     coordinates = status.place.bounding_box.coordinates
+
+                tags = PreProcessTweets.get_tags(text, True)
                 
                 writer = csv.writer(f, delimiter=";")
-                writer.writerow([text, user, time, location, coordinates])
+                writer.writerow([text, tags, user, time, location, coordinates])
                 
                 # Increment counter
                 MyStreamListener.counter += 1
@@ -57,8 +60,13 @@ if __name__ == "__main__":
                         track=["#CoronaHoax", 
                                "#CovidHoax", 
                                "#coronahoax", 
-                               "#covidhoax"])
-        
+                               "#covidhoax",
+                               "plandemic",
+                               "Plandemic",
+                               "#scamdemic",
+                               "#Scamdemic",
+                               "#SCAMDEMIC"])
+
     except KeyboardInterrupt:
         print("Stopped.")
     
