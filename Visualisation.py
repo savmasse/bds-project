@@ -22,7 +22,11 @@ class Visualisation:
 		tags_df.columns = ['?', 'tags']
 		tags_df = tags_df.drop('?', axis=1)
 		tags_df.tags = tags_df.tags.str.lower()
-		return tags_df['tags'].value_counts().rename_axis('tag').reset_index(name='counts')
+		tags_count = tags_df['tags'].value_counts().rename_axis('tag').reset_index(name='counts')
+		return tags_count.nlargest(10, 'counts').plot.bar(x='tag', y='counts')
+
+	def trending_tags_local(self, city, country):
+		pass
 
 	def get_dataframe(self):
 		return self.dataframe
