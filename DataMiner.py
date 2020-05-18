@@ -6,7 +6,7 @@ import pandas as pd
 
 class DataMiner:
     
-    def __init__(self, api, starting_hashtag, location_radius, language, tagignore = []):
+    def __init__(self, api, starting_hashtag, location_radius, language, tagignore = [], num_tweets=500):
         self.api = api
         self.location_radius = location_radius
         self.language = language
@@ -15,7 +15,8 @@ class DataMiner:
         self.starting_hashtag = starting_hashtag
         self.finder = HashtagFinder(api, starting_hashtag, location_radius, language, tagignore)
         self.tags_panda = pd.DataFrame(columns=['Author', 'Location', 'Tags'])
-    
+        self.num_tweets = num_tweets
+        
     def _collect_tweets(self):
         # find relevant hashtags to search for
         self.finder.collect_tags()
@@ -31,12 +32,12 @@ class DataMiner:
                                 count=100,
                                 lang=self.language,
                                 include_rts=False,
-                                tweet_mode="extended").items(500)
+                                tweet_mode="extended").items(self.num_tweets)
             items = list(items)
             for item in items:
                 if item not in self.ids:
                     self.ids.append(item.id)
-                    self.denial_tweets.append(item.full_text)
+                    self.denial_tweets.append(item)
                     self.tags_panda = self.tags_panda.append({'Author': item.author.name,
                                                             'Location': item.author.location,
                                                             'Tags': PreProcessTweets.get_tags(item.full_text, True)},
