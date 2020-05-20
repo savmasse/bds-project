@@ -31,6 +31,8 @@ class Visualisation:
 		return tags_count.nlargest(10, 'counts').plot.bar(x='tag', y='counts')
 
 	def trending_tags_local(self, city, country, radius):
+		if 'coordinates' not in self.dataframe:
+			print("No coordinates in dataframe, add them first with LocationService")
 		loc = LocationService()
 		coordinates = loc.get_coordinates(city, country)
 		loc.set_point(coordinates[0], coordinates[1])
@@ -39,6 +41,8 @@ class Visualisation:
 		return self.trending_tags_global(df_location)
 
 	def heat_map(self):
+		if 'coordinates' not in self.dataframe:
+			print("No coordinates in dataframe, add them first with LocationService")
 		heat_map = folium.Map(location=[0, 0], zoom_start=2)
 		points = self.dataframe.dropna().coordinates.tolist()
 		HeatMap(points).add_to(heat_map)
