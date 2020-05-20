@@ -3,6 +3,7 @@ Provides writing and reading functionality to transform data to and back from CS
 """
 from pyspark.sql import Row
 import csv
+from PreProcessTweets import PreProcessTweets
 
 class TweetDataIO():
         
@@ -25,6 +26,7 @@ class TweetDataIO():
             handle = status.user.screen_name
             text = status.full_text.replace(";","")
             text = " ".join(text.split())
+            tags = PreProcessTweets.get_tags(status.full_text)
             
             # Check if delimiter not broken
             if ";" in location or ";" in handle:
@@ -35,7 +37,7 @@ class TweetDataIO():
                 print("Warning: illegal newline in name or location.")
                 continue
 
-            rows.append([tweet_id, text, location, handle, time, label])
+            rows.append([tweet_id, text, location, handle, time, label, tags])
 
         # Append them into a CSV file
         with open(self.filename, ("a" if append else "w"), encoding="utf-8", newline='') as f:
@@ -55,7 +57,8 @@ class TweetDataIO():
                                         location=m[2],
                                         user=m[3],
                                         time=m[4],
-                                        label=int(m[5])
+                                        label=int(m[5]),
+                                        tags=m[6]
                                        ))
 
         try:
