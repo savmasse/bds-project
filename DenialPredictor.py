@@ -5,9 +5,9 @@ from sklearn.metrics import roc_curve, auc, accuracy_score, f1_score, precision_
 
 class DenialPredictor():
     
-    def __init__(self, df_train):
-        self.corpus = df_train.processed_text
-        self.labels = df_train.label
+    def __init__(self, corpus, labels):
+        self.corpus = corpus
+        self.labels = labels
         self.vectorizer = CountVectorizer()
         
     def fit_model(self, X_train, y_train):
@@ -29,5 +29,6 @@ class DenialPredictor():
         p = precision_score(y_truth, y_predict)
         r = recall_score(y_truth, y_predict)
         f = f1_score(y_truth, y_predict)
-        print("Performance metrics: ")
-        print(f"\t-Accuracy: {a:.3f},\n\t-Precision: {p:.3f}, \n\t-Recall: {r:.3f},\n\t-F1: {f:.3f}")
+#        print("Performance metrics: ")
+#        print(f"\t-Accuracy: {a:.3f},\n\t-Precision: {p:.3f}, \n\t-Recall: {r:.3f},\n\t-F1: {f:.3f}")
+        print(f"Accuracy: {a:.3f},\nPrecision: {p:.3f}, \nRecall: {r:.3f},\nF1: {f:.3f}")

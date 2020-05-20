@@ -13,17 +13,27 @@ class TweetDataIO():
     
     def write(self, tweets=None, label=0, append=True):
         """
-        Write the important information of the tweets
+        Write the important information of the tweets.
         """
         
         rows = []
-        for status in tweets:
-            location = status.user.location.replace(";","")
+        for index, status in enumerate(tweets):
+            
+            location = status.user.location
             time = status.created_at
             tweet_id = status.id
-            handle = status.user.screen_name.replace(";","")
-            text = status.full_text.replace(";","") # Remove the CSV delimiter
+            handle = status.user.screen_name
+            text = status.full_text.replace(";","")
             text = " ".join(text.split())
+            
+            # Check if delimiter not broken
+            if ";" in location or ";" in handle:
+                print("Warning: illegal delimiter ';' in name or location.")
+                continue
+            
+            if "\n" in location or "\n" in handle:
+                print("Warning: illegal newline in name or location.")
+                continue
 
             rows.append([tweet_id, text, location, handle, time, label])
 
@@ -32,6 +42,7 @@ class TweetDataIO():
             w = csv.writer(f, delimiter=";")
             for row in rows:
                 w.writerow(row)
+                
     
     def read(self):
         
@@ -48,7 +59,7 @@ class TweetDataIO():
                                        ))
 
         try:
-            ddf = self.spark.createDataFrame(items, verifySchema=True)
+            ddf = self.spark.createDataFrame(items)
             return ddf
         except:
             print("There was some sort of error with pyspark. Running this code again can sometimes fix it...")
