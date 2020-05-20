@@ -33,7 +33,6 @@ class LocationService:
 		else:
 			df = file
 		df = df.dropna(subset=['location'])
-		print(df.count())
 		geocode = RateLimiter(self.locator.geocode, min_delay_seconds=0.5)
 		df['coordinates'] = df['location'].apply(geocode).apply(lambda loc: [loc.point.latitude, loc.point.longitude] if loc else None)
 		return df
