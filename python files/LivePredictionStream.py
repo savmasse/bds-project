@@ -11,7 +11,8 @@ class LivePredictionStream(tweepy.StreamListener):
                  file_name, 
                  predictor,
                  num_iter=10, 
-                 verbose=0):
+                 verbose=0,
+                 tagignore=[]):
         
         super().__init__()
         self.file_name = file_name
@@ -19,6 +20,7 @@ class LivePredictionStream(tweepy.StreamListener):
         self.num_ter = num_iter
         self.counter = 1
         self.verbose = verbose
+        self.tagignore = tagignore
 
     def on_status(self, status):
                         
@@ -33,15 +35,18 @@ class LivePredictionStream(tweepy.StreamListener):
                 user = status.user.screen_name
                                 
                 # Preprocess
-                text = text.translate(str.maketrans('', '', string.punctuation))
                 text = re.sub(r'\s?http\S+', "", text)
-                text = " ".join(text.split())
+                text = [word for word in text.split() if word not in self.tagignore]
+                text = " ".join(text)
+                show_text = text
+                text = text.translate(str.maketrans('', '', string.punctuation))
+
                 
                 if self.verbose > 0:
                     p = self.predictor.model.predict_proba([text])
                     label = np.argmax(p)
                     label_text = ("denial" if label == 0 else "normal")
-                    print(f"({self.counter}) {label_text} ({p[0][label]:.2f}): {text}")
+                    print(f"({self.counter}) {label_text} ({p[0][label]:.2f}): {show_text}")
                     
                 location = status.user.location
                 coordinates = None
@@ -63,3 +68,4 @@ class LivePredictionStream(tweepy.StreamListener):
     def on_error(self, status_code):
         print("Error: ", status_code)
         return False
+    
